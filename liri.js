@@ -9,41 +9,43 @@ var fs = require('fs');
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
 
-  
 
 let command = process.argv[2];
 let term = process.argv[3]
-// let process.argv[2].user.choices;
 
+
+let result = function() {}
 switch (command) {
     case 'my-tweets':
-        client.get('search/tweets', { q: 'Jacob37131137' }, function (error, tweets, response) {
-            // console.log(response);
-            console.log(tweets.statuses[0].text);
-            console.log('===========================');
-            console.log('My tweets are listed below:')
-            console.log('===========================')
+        result =
+            client.get('search/tweets', { q: 'Jacob37131137' }, function (error, tweets, response) {
+                // console.log(response);
+                console.log(tweets.statuses[0].text);
+                console.log('===========================');
+                console.log('My tweets are listed below:')
+                console.log('===========================')
 
-            for (let i = 0; i < tweets.statuses.length; i++) {
-                console.log('Tweet: ' + tweets.statuses[i].text + ', ||||||||||||||   created: ' + tweets.statuses[i].created_at);
-            }
-            console.log('===========================');
-        });
+                for (let i = 0; i < tweets.statuses.length; i++) {
+                    console.log('Tweet: ' + tweets.statuses[i].text + ', ||||||||||||||   created: ' + tweets.statuses[i].created_at);
+                }
+                console.log('===========================');
+            });
 
         break;
     case 'spotify-this-song':
-        spotify.search({ type: 'track', query: term }, function (err, data) {
-            if (err) {
-                return console.log('Error occurred: ' + err);
-            }
-            // console.log(data.tracks.items[0].album.artists);
-            console.log('The artist is... ' + data.tracks.items[0].album.artists[0].name);
-            console.log('The song title is... ' + data.tracks.items[0].name);
+        result =
+            spotify.search({ type: 'track', query: term }, function (err, data) {
+                if (err) {
+                    return console.log('Error occurred: ' + err);
+                }
+                // console.log(data.tracks.items[0].album.artists);
+                console.log('The artist is... ' + data.tracks.items[0].album.artists[0].name);
+                console.log('The song title is... ' + data.tracks.items[0].name);
 
-            console.log('Link to the song on Spotify: ' + data.tracks.items[0].preview_url)
-            console.log('The album name is... ' + data.tracks.items[0].album.name);
+                console.log('Link to the song on Spotify: ' + data.tracks.items[0].preview_url)
+                console.log('The album name is... ' + data.tracks.items[0].album.name);
 
-        }); break;
+            }); break;
     case 'movie-this':
 
         // Then run a request to the OMDB API with the movie specified
@@ -87,36 +89,51 @@ switch (command) {
 
         break;
     case 'do-what-it-says':
-    fs.readFile("random.txt", "utf8", function(error, data) {
+        result =
+            fs.readFile("random.txt", "utf8", function (error, data) {
 
-        // If the code experiences any errors it will log the error to the console.
-        if (error) {
-          return console.log(error);
-        }
-      
-        // We will then print the contents of data
-        // console.log(data);
-      
-        // Then split it by commas (to make it more readable)
-        var dataArr = data.split(",").join(' ');
-      
-        // // We will then re-display the content as an array for later use.
-        console.log(dataArr);
-        spotify.search({ type: 'track', query: dataArr[1] }, function (err, data) {
-            if (err) {
-                return console.log('Error occurred: ' + err);
-            }
-            // console.log(data.tracks.items[0].album.artists);
-            console.log('The artist is... ' + data.tracks.items[0].album.artists[0].name);
-            console.log('The song title is... ' + data.tracks.items[0].name);
+                // If the code experiences any errors it will log the error to the console.
+                if (error) {
+                    return console.log(error);
+                }
 
-            console.log('Link to the song on Spotify: ' + data.tracks.items[0].preview_url)
-            console.log('The album name is... ' + data.tracks.items[0].album.name);
+                // We will then print the contents of data
+                // console.log(data);
 
-        });      
-      });
+                // Then split it by commas (to make it more readable)
+                var dataArr = data.split(",").join(' ');
+
+                // // We will then re-display the content as an array for later use.
+                console.log(dataArr);
+                spotify.search({ type: 'track', query: dataArr[1] }, function (err, data) {
+                    if (err) {
+                        return console.log('Error occurred: ' + err);
+                    }
+                    // console.log(data.tracks.items[0].album.artists);
+                    console.log('The artist is... ' + data.tracks.items[0].album.artists[0].name);
+                    console.log('The song title is... ' + data.tracks.items[0].name);
+
+                    console.log('Link to the song on Spotify: ' + data.tracks.items[0].preview_url)
+                    console.log('The album name is... ' + data.tracks.items[0].album.name);
+
+                });
+            });
         break;
     default:
         alert('Nobody Wins!');
 }
 
+
+fs.appendFile('log.txt', result, function (err) {
+
+    // If an error was experienced we say it.
+    if (err) {
+        console.log(err);
+    }
+
+    // If no error is experienced, we'll log the phrase "Content Added" to our node console.
+    else {
+        console.log("Content Added!");
+    }
+
+});
